@@ -1,0 +1,17 @@
+:root {
+  --ground: #0b0c0f;
+  --panel: #0f0e14;
+  --ink: #ffffff;
+  --muted: #bfbfc7;
+  --dim: #8c8c96;
+  --pink: #e083b8;
+  --deep: #ff008f;
+  --violet: #c4bbff;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --r: 22px;
+  --tap: 48px;
+  --display: 'Sen', 'PlexArabic', system-ui, -apple-system, sans-serif;
+  --body: 'PlexArabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+}

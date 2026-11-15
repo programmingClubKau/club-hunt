@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Section {
+  male
+  female
+}
+
+enum RouteStatus {
+  draft
+  open
+  closed
+}
+
+enum SessionMode {
+  solo
+  team
+}
+
+enum SessionStatus {
+  active
+  finished
+}
+
+model Route {
+  id        Int         @id @default(autoincrement())
+  nameAr    String      @map("name_ar")
+  nameEn    String      @default("") @map("name_en")
+  section   Section
+  status    RouteStatus @default(draft)
+  drawCount Int         @default(3) @map("draw_count")
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  posters  Poster[]
+  sessions HuntSession[]
+
+  @@map("routes")
+}
+
+model Poster {
+  id        Int      @id @default(autoincrement())
+  routeId   Int      @map("route_id")
+  nameAr    String   @default("") @map("name_ar")
+  nameEn    String   @default("") @map("name_en")
+  riddleAr  String   @default("") @map("riddle_ar")
+  riddleEn  String   @default("") @map("riddle_en")
+  token     String   @unique
+  humanCode String   @map("human_code")
+  seq       Int      @default(0)
+  active    Boolean  @default(true)
+  lat       Float?
+  lng       Float?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  route   Route         @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  steps   SessionStep[]
+  scans   Scan[]
+
+  @@index([routeId, seq])
+  @@map("posters")
+}
+
+model HuntSession {
+  id         Int           @id @default(autoincrement())
+  code       String        @unique
+  routeId    Int           @map("route_id")
+  section    Section
+  mode       SessionMode   @default(team)
+  name       String
+  joinCode   String        @unique @map("join_code")
+  claimCode  String?       @unique @map("claim_code")
+  redeemedAt DateTime?     @map("redeemed_at")
+  isTest     Boolean       @default(false) @map("is_test")
+  status     SessionStatus @default(active)
+  startedAt  DateTime      @default(now()) @map("started_at")
+  finishedAt DateTime?     @map("finished_at")
+  durationMs Int?          @map("duration_ms")
+
+  route   Route         @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  steps   SessionStep[]
+  scans   Scan[]
+  devices Device[]
+
+  @@index([routeId, status])
+  @@map("sessions")
+}
+
+model Device {
+  id         Int       @id @default(autoincrement())
+  token      String    @unique
+  sessionId  Int       @map("session_id")
+  ua         String    @default("")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  lastSeenAt DateTime  @default(now()) @map("last_seen_at")
+  revokedAt  DateTime? @map("revoked_at")
+
+  session HuntSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("devices")
+}
+
+model SessionStep {
+  id        Int       @id @default(autoincrement())
+  sessionId Int       @map("session_id")
+  stepNo    Int       @map("step_no")
+  posterId  Int       @map("poster_id")
+  scannedAt DateTime? @map("scanned_at")
+
+  session HuntSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  poster  Poster      @relation(fields: [posterId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, stepNo])
+  @@index([sessionId, stepNo])
+  @@map("session_steps")
+}
+
+model Scan {
+  id        Int      @id @default(autoincrement())
+  sessionId Int?     @map("session_id")
+  posterId  Int?     @map("poster_id")
+  token     String
+  accepted  Boolean  @default(false)
+  reason    String   @default("")
+  ua        String   @default("")
+  at        DateTime @default(now())
+
+  session HuntSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  poster  Poster?      @relation(fields: [posterId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("scans")
+}
+
+model Setting {
+  key   String @id
+  value String @default("")
+
+  @@map("settings")
+}

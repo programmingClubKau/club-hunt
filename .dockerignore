@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.git
+.tanstack
+*.log
+data
+apps/api/.env
+apps/web/.env
+packages/db/.env

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.tanstack/
+.output/
+.env
+.env.local
+*.log
+.DS_Store
+.idea/
+
+# Prisma client is generated on install and inside the image
+packages/db/src/generated/
+
+# local database
+data/

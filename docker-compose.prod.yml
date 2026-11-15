@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hunt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hunt_local_pw}
+      POSTGRES_DB: ${POSTGRES_DB:-hunt}
+    volumes:
+      - hunt_pgdata_prod:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hunt} -d ${POSTGRES_DB:-hunt}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8794
+      DATABASE_URL: postgresql://${POSTGRES_USER:-hunt}:${POSTGRES_PASSWORD:-hunt_local_pw}@db:5432/${POSTGRES_DB:-hunt}?schema=public
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-progg-hunt}
+      COOKIE_SECRET: ${COOKIE_SECRET:-change-me-before-the-event}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8794/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3080
+      API_URL: http://api:8794
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3080"
+
+volumes:
+  hunt_pgdata_prod:
