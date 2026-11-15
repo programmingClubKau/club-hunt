@@ -82,6 +82,25 @@ describe('public api', () => {
     expect(route?.status).toBe('open')
   })
 
+  test('events list returns the open events of a section with their qr count', async () => {
+    const res = await app.inject({ method: 'GET', url: '/events/male' })
+    expect(res.statusCode).toBe(200)
+    const mine = res.json().events.find((e: any) => e.id === routeId)
+    expect(mine).toBeTruthy()
+    expect(mine.stops).toBe(6)
+    expect(mine.drawCount).toBe(3)
+  })
+
+  test('events list never mixes sections', async () => {
+    const res = await app.inject({ method: 'GET', url: '/events/female' })
+    expect(res.json().events.some((e: any) => e.id === routeId)).toBe(false)
+  })
+
+  test('events list rejects an unknown section', async () => {
+    const res = await app.inject({ method: 'GET', url: '/events/other' })
+    expect(res.statusCode).toBe(400)
+  })
+
   test('starting a session draws the configured number of stops and hides future riddles', async () => {
     const started = await startSession('alpha')
     expect(started.status).toBe(200)

@@ -10,6 +10,9 @@ const dict = {
   sectionMaleSub: ['مسار البنين', 'Male section trail'],
   sectionFemaleSub: ['مسار البنات', 'Female section trail'],
   noRoutes: ['ما فيه مسار مفتوح الحين. كلّموا المشرف.', 'No trail is open right now. Ask an organizer.'],
+  chooseEvent: ['أي فعالية تلعبون؟', 'Which event are you in?'],
+  noEvents: ['ما فيه فعالية مفتوحة الحين. كلّموا المشرف.', 'No event is open right now. Ask an organizer.'],
+  drawShort: ['تسحبون {n}', 'you draw {n}'],
   setup: ['جهّزوا فريقكم', 'Set up your team'],
   solo: ['لحالي', 'Solo'],
   team: ['فريق', 'Team'],
@@ -61,10 +64,10 @@ const dict = {
   step1: ['اختاروا قسمكم', 'Pick your section'],
   step2: ['ابدأوا المطاردة', 'Start the hunt'],
   step3: ['امسحوا رمز QR عند كل محطة', 'Scan the QR at each stop'],
-  assigned: ['مساركم', 'Your trail'],
+  assigned: ['الفعالية', 'Your event'],
   assignedNote: [
-    'اخترنا لكم هالمسار عشوائيا. اتبعوه من أول محطة لآخر محطة.',
-    'This trail was picked at random for you. Follow it from the first stop to the last.',
+    'محطاتكم بتنحسب عشوائيا من هذي الفعالية. اتبعوها من أول محطة لآخر محطة.',
+    'Your stops are drawn at random from this event. Follow them from the first stop to the last.',
   ],
   drawNote: ['عندكم {n} محطات من أصل {m}، بترتيب عشوائي.', 'Your {n} stops out of {m}, in a random order.'],
   winner: ['فزتوا', 'You won'],
@@ -97,6 +100,14 @@ export function pick(lang: Lang, ar: string, en: string): string {
 }
 
 export const dir = (lang: Lang) => (lang === 'ar' ? 'rtl' : 'ltr')
+
+/** Arabic counts do not take a plain number plus plural, so spell them out. */
+export function stopsCount(lang: Lang, n: number): string {
+  if (lang === 'en') return `${n} ${n === 1 ? 'stop' : 'stops'}`
+  if (n === 1) return 'محطة وحدة'
+  if (n === 2) return 'محطتين'
+  return `${n} محطات`
+}
 
 export function formatDuration(ms: number | null | undefined): string {
   if (ms === null || ms === undefined) return ''

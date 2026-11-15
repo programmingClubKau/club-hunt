@@ -421,7 +421,8 @@ select.status-closed { color: #ff9fb0; border-color: rgba(255, 80, 110, 0.35); }
 
 .admin { max-width: 780px; margin: 0 auto; }
 .admin-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
-.admin-nav a {
+.admin-nav a,
+.admin-nav .link-btn {
   min-height: 36px;
   display: inline-flex;
   align-items: center;
@@ -430,6 +431,9 @@ select.status-closed { color: #ff9fb0; border-color: rgba(255, 80, 110, 0.35); }
   border: 1px solid var(--line);
   font-size: 13px;
   color: var(--muted);
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
 }
 .admin-row { flex-wrap: wrap; }
 .row-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -448,7 +452,11 @@ select.status-closed { color: #ff9fb0; border-color: rgba(255, 80, 110, 0.35); }
 .pill.draft { color: #ffd9a0; border-color: rgba(255, 190, 80, 0.35); }
 .pill.closed { color: #ff9fb0; border-color: rgba(255, 80, 110, 0.35); }
 .poster-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.poster-row .card-main { flex: 1 1 200px; }
 .poster-row.off { opacity: 0.5; }
+.qr-thumb { width: 64px; height: 64px; border-radius: 10px; background: #fff; padding: 4px; display: block; flex: 0 0 auto; }
+.metric-strip { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 14px; }
+.metric-strip strong { font-size: 15px; }
 .tiny-line { font-size: 11px; color: var(--dim); letter-spacing: 0.06em; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .check { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; }

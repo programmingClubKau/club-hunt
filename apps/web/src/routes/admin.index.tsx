@@ -19,20 +19,20 @@ function Dashboard() {
 
   return (
     <>
-      <h1 className="page-title">Routes</h1>
+      <h1 className="page-title">Events</h1>
       {!data.hasBaseUrl ? (
         <p className="warn">
-          Set the public base URL in <a href="/admin/settings">Settings</a> before printing stickers, or the QR codes
+          Set the public base URL in <a href="/admin/settings">Settings</a> before printing QR codes, or the stickers
           will point at localhost.
         </p>
       ) : null}
 
       <div className="cta-row">
-        <a className="btn primary" href="/admin/routes/new?section=male">
-          New male route
+        <a className="btn primary" href="/admin/events/new?section=male">
+          New male event
         </a>
-        <a className="btn primary" href="/admin/routes/new?section=female">
-          New female route
+        <a className="btn primary" href="/admin/events/new?section=female">
+          New female event
         </a>
       </div>
 
@@ -42,7 +42,7 @@ function Dashboard() {
           <section key={section}>
             <h2 className="sec-title">{label}</h2>
             {rows.length === 0 ? (
-              <p className="empty">No routes yet.</p>
+              <p className="empty">No events yet.</p>
             ) : (
               <div className="list">
                 {rows.map((r) => (
@@ -52,15 +52,16 @@ function Dashboard() {
                         {r.nameAr} {r.nameEn ? <span className="dim">/ {r.nameEn}</span> : null}
                       </strong>
                       <span className="dim small">
-                        {r.posters} spots · draws {r.drawCount} per team · {r.running} running · {r.finished} finished
+                        {r.posters} QR {r.posters === 1 ? 'code' : 'codes'} · draws {r.drawCount} per team · {r.running}{' '}
+                        running · {r.finished} finished
                       </span>
                     </div>
                     <div className="row-actions">
-                      <a className="btn tiny" href={`/admin/routes/${r.id}`}>
+                      <a className="btn tiny" href={`/admin/events/${r.id}`}>
                         Edit
                       </a>
                       <a className="btn tiny" href={`/admin/stickers/${r.id}`}>
-                        Stickers
+                        QR sheet
                       </a>
                       <a className="btn tiny" href={`/admin/sessions/${r.id}`}>
                         Live

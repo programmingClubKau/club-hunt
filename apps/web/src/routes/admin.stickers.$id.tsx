@@ -22,7 +22,7 @@ function Stickers() {
   return (
     <div className="sheet-wrap">
       <div className="sheet-head no-print">
-        <a className="crumb" href={`/admin/routes/${route.id}`}>
+        <a className="crumb" href={`/admin/events/${route.id}`}>
           ← {route.nameAr}
         </a>
         <p>

@@ -23,7 +23,7 @@ function Live() {
 
   return (
     <>
-      <a className="crumb" href={`/admin/routes/${route.id}`}>
+      <a className="crumb" href={`/admin/events/${route.id}`}>
         ← {route.nameAr}
       </a>
       <h1 className="page-title">Live · {route.nameAr}</h1>

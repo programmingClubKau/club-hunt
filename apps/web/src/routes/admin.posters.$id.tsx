@@ -18,10 +18,10 @@ function PosterEditor() {
 
   return (
     <>
-      <a className="crumb" href={`/admin/routes/${routeId}`}>
-        ← Back to route
+      <a className="crumb" href={`/admin/events/${routeId}`}>
+        ← Back to event
       </a>
-      <h1 className="page-title">Edit stop</h1>
+      <h1 className="page-title">Edit QR code</h1>
       <form
         className="form"
         onSubmit={async (event) => {
@@ -36,7 +36,7 @@ function PosterEditor() {
             lat: String(form.get('lat') ?? ''),
             lng: String(form.get('lng') ?? ''),
           })
-          await router.navigate({ to: '/admin/routes/$id', params: { id: String(routeId) } })
+          await router.navigate({ to: '/admin/events/$id', params: { id: String(routeId) } })
         }}
       >
         <label className="field">

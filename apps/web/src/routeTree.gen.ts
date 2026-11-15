@@ -23,9 +23,9 @@ import { Route as SCodeRouteImport } from './routes/s.$code'
 import { Route as StartRouteIdRouteImport } from './routes/start.$routeId'
 import { Route as TSectionRouteImport } from './routes/t.$section'
 import { Route as VCodeRouteImport } from './routes/v.$code'
+import { Route as AdminEventsIdRouteImport } from './routes/admin.events.$id'
+import { Route as AdminEventsNewRouteImport } from './routes/admin.events.new'
 import { Route as AdminPostersIdRouteImport } from './routes/admin.posters.$id'
-import { Route as AdminRoutesIdRouteImport } from './routes/admin.routes.$id'
-import { Route as AdminRoutesNewRouteImport } from './routes/admin.routes.new'
 import { Route as AdminSessionsIdRouteImport } from './routes/admin.sessions.$id'
 import { Route as AdminStickersIdRouteImport } from './routes/admin.stickers.$id'
 
@@ -99,19 +99,19 @@ const VCodeRoute = VCodeRouteImport.update({
   path: '/v/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEventsIdRoute = AdminEventsIdRouteImport.update({
+  id: '/events/$id',
+  path: '/events/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventsNewRoute = AdminEventsNewRouteImport.update({
+  id: '/events/new',
+  path: '/events/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPostersIdRoute = AdminPostersIdRouteImport.update({
   id: '/posters/$id',
   path: '/posters/$id',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRoutesIdRoute = AdminRoutesIdRouteImport.update({
-  id: '/routes/$id',
-  path: '/routes/$id',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRoutesNewRoute = AdminRoutesNewRouteImport.update({
-  id: '/routes/new',
-  path: '/routes/new',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSessionsIdRoute = AdminSessionsIdRouteImport.update({
@@ -140,9 +140,9 @@ export interface FileRoutesByFullPath {
   '/t/$section': typeof TSectionRoute
   '/v/$code': typeof VCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/events/$id': typeof AdminEventsIdRoute
+  '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/posters/$id': typeof AdminPostersIdRoute
-  '/admin/routes/$id': typeof AdminRoutesIdRoute
-  '/admin/routes/new': typeof AdminRoutesNewRoute
   '/admin/sessions/$id': typeof AdminSessionsIdRoute
   '/admin/stickers/$id': typeof AdminStickersIdRoute
 }
@@ -160,9 +160,9 @@ export interface FileRoutesByTo {
   '/t/$section': typeof TSectionRoute
   '/v/$code': typeof VCodeRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/events/$id': typeof AdminEventsIdRoute
+  '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/posters/$id': typeof AdminPostersIdRoute
-  '/admin/routes/$id': typeof AdminRoutesIdRoute
-  '/admin/routes/new': typeof AdminRoutesNewRoute
   '/admin/sessions/$id': typeof AdminSessionsIdRoute
   '/admin/stickers/$id': typeof AdminStickersIdRoute
 }
@@ -182,9 +182,9 @@ export interface FileRoutesById {
   '/t/$section': typeof TSectionRoute
   '/v/$code': typeof VCodeRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/events/$id': typeof AdminEventsIdRoute
+  '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/posters/$id': typeof AdminPostersIdRoute
-  '/admin/routes/$id': typeof AdminRoutesIdRoute
-  '/admin/routes/new': typeof AdminRoutesNewRoute
   '/admin/sessions/$id': typeof AdminSessionsIdRoute
   '/admin/stickers/$id': typeof AdminStickersIdRoute
 }
@@ -205,9 +205,9 @@ export interface FileRouteTypes {
     | '/t/$section'
     | '/v/$code'
     | '/admin/'
+    | '/admin/events/$id'
+    | '/admin/events/new'
     | '/admin/posters/$id'
-    | '/admin/routes/$id'
-    | '/admin/routes/new'
     | '/admin/sessions/$id'
     | '/admin/stickers/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -225,9 +225,9 @@ export interface FileRouteTypes {
     | '/t/$section'
     | '/v/$code'
     | '/admin'
+    | '/admin/events/$id'
+    | '/admin/events/new'
     | '/admin/posters/$id'
-    | '/admin/routes/$id'
-    | '/admin/routes/new'
     | '/admin/sessions/$id'
     | '/admin/stickers/$id'
   id:
@@ -246,9 +246,9 @@ export interface FileRouteTypes {
     | '/t/$section'
     | '/v/$code'
     | '/admin/'
+    | '/admin/events/$id'
+    | '/admin/events/new'
     | '/admin/posters/$id'
-    | '/admin/routes/$id'
-    | '/admin/routes/new'
     | '/admin/sessions/$id'
     | '/admin/stickers/$id'
   fileRoutesById: FileRoutesById
@@ -367,25 +367,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/events/$id': {
+      id: '/admin/events/$id'
+      path: '/events/$id'
+      fullPath: '/admin/events/$id'
+      preLoaderRoute: typeof AdminEventsIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/events/new': {
+      id: '/admin/events/new'
+      path: '/events/new'
+      fullPath: '/admin/events/new'
+      preLoaderRoute: typeof AdminEventsNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/posters/$id': {
       id: '/admin/posters/$id'
       path: '/posters/$id'
       fullPath: '/admin/posters/$id'
       preLoaderRoute: typeof AdminPostersIdRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/routes/$id': {
-      id: '/admin/routes/$id'
-      path: '/routes/$id'
-      fullPath: '/admin/routes/$id'
-      preLoaderRoute: typeof AdminRoutesIdRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/routes/new': {
-      id: '/admin/routes/new'
-      path: '/routes/new'
-      fullPath: '/admin/routes/new'
-      preLoaderRoute: typeof AdminRoutesNewRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/sessions/$id': {
@@ -409,9 +409,9 @@ interface AdminRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminEventsIdRoute: typeof AdminEventsIdRoute
+  AdminEventsNewRoute: typeof AdminEventsNewRoute
   AdminPostersIdRoute: typeof AdminPostersIdRoute
-  AdminRoutesIdRoute: typeof AdminRoutesIdRoute
-  AdminRoutesNewRoute: typeof AdminRoutesNewRoute
   AdminSessionsIdRoute: typeof AdminSessionsIdRoute
   AdminStickersIdRoute: typeof AdminStickersIdRoute
 }
@@ -420,9 +420,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminEventsIdRoute: AdminEventsIdRoute,
+  AdminEventsNewRoute: AdminEventsNewRoute,
   AdminPostersIdRoute: AdminPostersIdRoute,
-  AdminRoutesIdRoute: AdminRoutesIdRoute,
-  AdminRoutesNewRoute: AdminRoutesNewRoute,
   AdminSessionsIdRoute: AdminSessionsIdRoute,
   AdminStickersIdRoute: AdminStickersIdRoute,
 }

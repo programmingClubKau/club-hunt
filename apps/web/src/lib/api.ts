@@ -54,6 +54,8 @@ async function send<T>(path: string, method: Method, body?: unknown): Promise<T>
 export const api = {
   raw: (path: string, method: Method = 'GET', body?: unknown) => apiCall({ data: { path, method, body } }),
   assign: (section: 'male' | 'female') => get<{ ok: boolean; routeId: number | null }>(`/routes/${section}/assign`),
+  events: (section: 'male' | 'female') =>
+    get<{ ok: boolean; events: EventRow[] }>(`/events/${section}`),
   routePublic: (id: number) =>
     get<{ ok: boolean; route?: RoutePublic; stops?: number; drawCount?: number; error?: string }>(
       `/routes/${id}/public`,
@@ -105,6 +107,7 @@ export const api = {
 /* --------------------------------------------------------------- types */
 
 export type RoutePublic = { id: number; nameAr: string; nameEn: string; section: 'male' | 'female'; drawCount?: number }
+export type EventRow = { id: number; nameAr: string; nameEn: string; drawCount: number; stops: number }
 export type RouteFull = RoutePublic & { status: 'draft' | 'open' | 'closed'; drawCount: number; createdAt: string }
 export type Poster = {
   id: number

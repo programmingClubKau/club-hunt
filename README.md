@@ -1,19 +1,19 @@
 # club-hunt
 
-A treasure hunt you can run in an afternoon. Organizers build a trail in the browser, print the QR stickers, and teams walk it stop by stop on their phones.
+A treasure hunt you can run in an afternoon. Organizers create an event in the browser, add as many QR codes as they like, print them, and teams walk the hunt stop by stop on their phones.
 
 ![runtime](https://img.shields.io/badge/runtime-Bun%201.4-black?logo=bun)
 ![ui](https://img.shields.io/badge/ui-TanStack%20Start%20%2B%20React%2019-f472b6)
 ![api](https://img.shields.io/badge/api-Fastify%205-f472b6)
 ![db](https://img.shields.io/badge/db-PostgreSQL%2018%20%2B%20Prisma-336791?logo=postgresql)
-![tests](https://img.shields.io/badge/tests-15%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-18%20passing-brightgreen)
 ![status](https://img.shields.io/badge/status-ready%20for%20an%20event-blue)
 
 ## The idea
 
-A team taps its section, gets a trail, and reads a riddle. They walk to the place the riddle describes, scan the sticker on the wall, and the next riddle appears. The last scan ends the hunt and prints a winner badge they can show at the booth to collect the prize.
+A team taps its section, picks the event, and reads a riddle. They walk to the place the riddle describes, scan the QR code on the wall, and the next riddle appears. The last scan ends the hunt and prints a winner badge they can show at the booth to collect the prize.
 
-A trail is a pool of spots, not a fixed path. A pool of 12 spots with 3 per team gives 220 combinations, and each team also gets its own order, so two teams almost never walk the same route. The men's and women's sections are separate because the buildings are separate, and their results never mix.
+An event is a pool of QR codes, not a fixed path. A pool of 12 with 3 per team gives 220 combinations, and each team also gets its own order, so two teams almost never walk the same route. The men's and women's sections are separate because the buildings are separate, and their results never mix.
 
 ## What it does not do
 
@@ -21,9 +21,9 @@ No player accounts, no GPS tracking, no photo uploads, no push notifications. No
 
 ## How it plays
 
-1. Player picks بنين or بنات, picks solo or a team, enters a name.
-2. The server assigns a random open trail and deals that team its stops.
-3. Riddle one shows. The player scans the sticker at the location.
+1. Player picks بنين or بنات, then picks the event by name, then picks solo or a team and enters a name.
+2. The server deals that team its stops, drawn at random from every QR code in the event.
+3. Riddle one shows. The player scans the QR code at the location.
 4. Correct scan unlocks riddle two, and so on.
 5. The final scan mints a claim code and shows the winner badge.
 6. Staff scan the badge QR at the booth, see "الفوز مؤكد", and mark the prize collected.
@@ -72,35 +72,38 @@ On Coolify the project is `club-hunt` in the Programming Club project, served at
 ## Setting up an event
 
 1. Open `/admin/settings` and set the public base URL to the address phones will actually use. Every printed QR bakes that address in, so set it before printing anything.
-2. Create one trail per section. Open it.
-3. Add the spots to the pool. Set "spots per team" to 3 for a 12 spot trail.
-4. Print the sticker sheet for that trail, cut, and post them.
-5. Leave trails in `draft` until the stickers are on the walls, then switch them to `open`.
+2. Create one event per section. Open it.
+3. Add the QR codes to the pool, one per place, each with its riddle. Add as many as the event needs.
+4. Set "QR codes per team" to 3 for a 12 code event.
+5. Print the QR sheet for that event, cut, and post them.
+6. Leave events in `draft` until the codes are on the walls, then switch them to `open`.
 
 ## Pages
 
 | Path | Who | What |
 | --- | --- | --- |
 | `/` | player | Section choice, join a team, leaderboard |
-| `/t/:section` | player | Assigns a random open trail and redirects |
-| `/start/:routeId` | player | Solo or team setup |
+| `/t/:section` | player | Lists the open events of that section |
+| `/start/:routeId` | player | Solo or team setup for the chosen event |
 | `/h` | player | Current riddle, progress, team code |
 | `/s/:token` | player | Scan landing, resolves a sticker |
 | `/c` | player | Manual code entry |
 | `/join` | player | A second phone joins with a team code |
-| `/board` | player | Results per trail |
+| `/board` | player | Results per event |
 | `/v/:code` | organizer | Booth check for a winner badge |
-| `/admin` | organizer | Trails, counts, status |
-| `/admin/routes/:id` | organizer | Spots, add, reorder, status |
+| `/admin` | organizer | Events, QR counts, status |
+| `/admin/events/new` | organizer | Create an event |
+| `/admin/events/:id` | organizer | QR code list, add, reorder, status |
+| `/admin/posters/:id` | organizer | Edit one QR code |
 | `/admin/stickers/:id` | organizer | Printable sticker sheet |
 | `/admin/sessions/:id` | organizer | Live console, force step, reset, mark test |
 | `/admin/settings` | organizer | Public base URL |
 
 ## API
 
-Public: `GET /health`, `GET /routes/:section/assign`, `GET /routes/:id/public`, `POST /sessions`, `GET /sessions/me`, `GET /scan/:code`, `POST /scan`, `POST /join`, `GET /board`, `GET /leaderboard/:routeId`, `GET /verify/:code`, `GET /qr.svg`.
+Public: `GET /health`, `GET /events/:section`, `GET /routes/:section/assign`, `GET /routes/:id/public`, `POST /sessions`, `GET /sessions/me`, `GET /scan/:code`, `POST /scan`, `POST /join`, `GET /board`, `GET /leaderboard/:routeId`, `GET /verify/:code`, `GET /qr.svg`.
 
-Organizer, behind the `adm` cookie: login and logout, route and poster CRUD, token rotation, reorder, sticker QR files, session list and actions, redemption, CSV export, settings.
+Organizer, behind the `adm` cookie: login and logout, event and QR code CRUD, token rotation, reorder, QR files, session list and actions, redemption, CSV export, settings.
 
 Every endpoint is one file in `apps/api/routes/`, loaded by `tools/loadRoutes.ts`, with the shared types in `src/types/globals.d.ts` so a route file needs no imports.
 
@@ -110,7 +113,7 @@ Every endpoint is one file in `apps/api/routes/`, loaded by `tools/loadRoutes.ts
 bun run test
 ```
 
-Fifteen tests against a real Postgres database. They cover trail assignment, session creation and cookie signing, the pool cap, distinct stops per team, different paths for different teams, that only the current riddle is ever in a payload, out of order refusal, idempotent rescans, the typed code path, a second phone joining as its own device, device revocation, a full run minting a valid claim, unknown claim codes, single use redemption, organizer auth, draft invisibility, and QR generation. The suite cleans its own rows and puts the base URL back.
+Eighteen tests against a real Postgres database. They build their own event and QR codes and delete them afterwards, so they run against an empty database. They cover event listing per section, section isolation, session creation and cookie signing, the pool cap, distinct stops per team, different paths for different teams, that only the current riddle is ever in a payload, out of order refusal, idempotent rescans, the typed code path, a second phone joining as its own device, device revocation, a full run minting a valid claim, unknown claim codes, single use redemption, organizer auth, draft invisibility, and QR generation. The suite cleans its own rows and puts the base URL back.
 
 ## The decisions that matter
 
