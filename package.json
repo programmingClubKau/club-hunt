@@ -11,7 +11,6 @@
     "db:down": "docker compose down",
     "db:migrate": "bun --cwd packages/db run migrate",
     "db:generate": "bun --cwd packages/db run generate",
-    "db:seed": "bun --cwd packages/db run seed",
     "db:studio": "bun --cwd packages/db run studio",
     "test": "bun --cwd apps/api test",
     "typecheck": "bun --cwd apps/api run typecheck && bun --cwd apps/web run typecheck"

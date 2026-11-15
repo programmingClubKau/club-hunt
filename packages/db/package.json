@@ -10,7 +10,6 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate dev --name init",
     "deploy": "prisma migrate deploy",
-    "seed": "bun run src/seed.ts",
     "studio": "prisma studio"
   },
   "dependencies": {

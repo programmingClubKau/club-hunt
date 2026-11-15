@@ -33,7 +33,7 @@ No player accounts, no GPS tracking, no photo uploads, no push notifications. No
 ```
 apps/web        TanStack Start (React 19, Vite 8), server rendered, port 3080
 apps/api        Fastify 5, one file per endpoint, port 8794
-packages/db     Prisma schema, client and seed
+packages/db     Prisma schema and client
 packages/theme  brand tokens used by both apps
 ```
 
@@ -45,10 +45,11 @@ Bun workspaces, one lockfile. The browser only ever talks to the web app. Every 
 docker compose up -d      # PostgreSQL 18 on 5433
 bun install
 bun run db:migrate
-bun run db:seed
 bun run dev:api           # http://127.0.0.1:8794
 bun run dev:web           # http://127.0.0.1:3080
 ```
+
+The database starts empty. Everything is created from the organizer console.
 
 Organizer console lives at `/admin/login`. The password comes from `ADMIN_PASSWORD`, which defaults to `progg-hunt` and should not stay that way.
 

@@ -1,8 +1,9 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test'
-import { prisma } from '@club/db'
+import { prisma, randomCode, randomToken } from '@club/db'
 import { buildServer } from '../src/server'
 
 const NAME_PREFIX = 'TEST_RUN_'
+const MATCH_PREFIX = 'ZZTEST_'
 let app: Awaited<ReturnType<typeof buildServer>>
 let cookie = ''
 let routeId = 0
@@ -11,11 +12,26 @@ let drawCount = 3
 
 beforeAll(async () => {
   app = await buildServer()
-  const route = await prisma.route.findFirst({
-    where: { section: 'male', status: 'open' },
-    include: { posters: { where: { active: true }, orderBy: { seq: 'asc' } } },
+  // Each run builds the trail it needs, so the suite never depends on seeded data.
+  const route = await prisma.route.create({
+    data: {
+      nameAr: MATCH_PREFIX + 'مسار',
+      nameEn: 'Test trail',
+      section: 'male',
+      status: 'open',
+      drawCount: 3,
+      posters: {
+        create: Array.from({ length: 6 }, (_, i) => ({
+          seq: i + 1,
+          nameAr: `${MATCH_PREFIX}محطة ${i + 1}`,
+          riddleAr: `${MATCH_PREFIX}لغز ${i + 1}`,
+          token: randomToken(),
+          humanCode: randomCode(6),
+        })),
+      },
+    },
+    include: { posters: { orderBy: { seq: 'asc' } } },
   })
-  if (!route) throw new Error('seed the database first: bun run db:seed')
   routeId = route.id
   drawCount = route.drawCount
   tokens = route.posters.map((p) => p.token)
@@ -32,6 +48,7 @@ async function stepsOf(sessionCode: string): Promise<string[]> {
 }
 
 afterAll(async () => {
+  await prisma.route.delete({ where: { id: routeId } }).catch(() => {})
   await prisma.huntSession.deleteMany({ where: { name: { startsWith: NAME_PREFIX } } })
   await app.close()
   await prisma.$disconnect()
